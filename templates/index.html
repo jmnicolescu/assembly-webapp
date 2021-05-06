@@ -1,0 +1,30 @@
+<!doctype html>
+
+{% if name %}
+    <title>[ Running on {{ name }} ]</title>
+{% else %}
+    <title>[ Assembly Lane ]</title>
+{% endif %}
+
+<body style="background: {{ color }};"></body>
+<div style="color: #e4e4e4;
+    text-align:  center;
+    height: 90px;
+    vertical-align:  middle;">
+
+{% if name %}
+    <h1>[ Running on {{ name }} ]</h1>
+{% else %}
+    <h1>[ Assembly Lane ]</h1>
+{% endif %}
+
+{% if contents %}
+  <textarea rows="10" cols="50">
+    {{ contents }}
+  </textarea>
+{% endif %}
+</div>
+
+<div>
+    <center><img src="/static/assembly_lane.jpg" alt="Assembly Lane" height="240px" width="600px"></center>
+</div>
