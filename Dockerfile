@@ -1,6 +1,6 @@
 FROM centos:7
 
-LABEL version="1.0"
+LABEL version="2.0"
 LABEL description="Sample Assembly Lane WebApp"
 
 RUN yum -y install python3 python3-pip
