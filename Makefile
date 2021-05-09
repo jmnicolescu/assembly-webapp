@@ -57,6 +57,11 @@ docker-clean:
 	docker ps -a | grep "FLASK" | awk '{print $$1}' | xargs --no-run-if-empty docker rm
 	docker images -a | grep "assembly-webapp" | awk '{print $$3}' | xargs --no-run-if-empty docker rmi --force
 
+git-tag-clean:
+	git tag -d 1.0
+	git tag -d 2.0
+	git push --tags
+
 build-version1:
 	sed -i 's/version="[0-9].0"/version="1.0"/g' Dockerfile
 	cp templates/index_1.0.html templates/index.html
