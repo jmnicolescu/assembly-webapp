@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-hello-app-ingress
+  namespace: ns-nginx-hello-app
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # ingress.kubernetes.io/ssl-passthrough: "true"
+    # nginx.ingress.kubernetes.io/secure-backends: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+    - hosts:
+      - c1-nginx-hello-app.flexlab.local
+      secretName: nginx-hello-app-tls
+  rules:
+  - host: c1-nginx-hello-app.flexlab.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx-service
+          servicePort: 80

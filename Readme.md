@@ -6,6 +6,7 @@
 Features of assembly-webapp:
 
    - Integrates Docker Hub and GitHub
+   - Integrates Harbor Registry and GitLab
    - Provides colorful backgrounds
 ```
 
@@ -25,3 +26,16 @@ Below are the steps required to get this working on a base linux system.
         FLASK_APP=app.py flask run --host=localhost --port=8080
 
 ```
+
+## Store secrets by using the pass insert command:
+
+    \> pass insert HARBOR_USERNAME
+    \> pass insert HARBOR_PASSWORD
+    \> pass insert HARBOR_REGISTRY
+
+
+### Set your environment - Read secrets from pass and set them as environment variables
+
+    export HARBOR_USERNAME=$(pass HARBOR_USERNAME)
+    export HARBOR_PASSWORD=$(pass HARBOR_PASSWORD)
+    export HARBOR_REGISTRY=$(pass HARBOR_REGISTRY)

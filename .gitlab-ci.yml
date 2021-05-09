@@ -1,0 +1,21 @@
+stages:
+  - build
+
+services:
+  - docker:dind
+
+docker-build:
+  image: docker:latest
+  stage: build
+  tags:
+    - webapp
+  before_script:
+    - echo -n $HARBOR_PASSWORD | docker login -u $HARBOR_USERNAME --password-stdin $HARBOR_REGISTRY
+  script:
+    - docker build  . -t  $HARBOR_REGISTRY_IMAGE:$BUILD_TAG_VERSION -t $HARBOR_REGISTRY_IMAGE:latest
+    - docker tag $HARBOR_REGISTRY_IMAGE:$BUILD_TAG_VERSION $HARBOR_REGISTRY/$HARBOR_REGISTRY_IMAGE:$BUILD_TAG_VERSION
+    - docker tag $HARBOR_REGISTRY_IMAGE:latest $HARBOR_REGISTRY/$HARBOR_REGISTRY_IMAGE:latest
+    - docker push $HARBOR_REGISTRY/$HARBOR_REGISTRY_IMAGE:$BUILD_TAG_VERSION
+    - docker push $HARBOR_REGISTRY/$HARBOR_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $HARBOR_REGISTRY
