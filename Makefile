@@ -71,7 +71,9 @@ build-version2:
 	cp templates/index_2.0.html templates/index.html
 	git add .
 	git commit -m "update to version 2.0"
-	git push -o ci.variable="BUILD_TAG_VERSION=2.0"
+	git push
+	git tag 2.0
+	git push --tags
 
 harbor-version1:
 	@echo " "
