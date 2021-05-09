@@ -62,7 +62,9 @@ build-version1:
 	cp templates/index_1.0.html templates/index.html
 	git add .
 	git commit -m "update to version 1.0"
-	git push -o ci.variable="BUILD_TAG_VERSION=1.0"
+	git push
+	git tag 1.0
+	git push --tags
 
 build-version2:
 	sed -i 's/version="[0-9].0"/version="2.0"/g' Dockerfile
