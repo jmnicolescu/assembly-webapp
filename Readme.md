@@ -7,25 +7,40 @@ Features of assembly-webapp:
 
    - Integrates Docker Hub and GitHub
    - Integrates Harbor Registry and GitLab
-   - Provides colorful backgrounds
-```
 
 ```
-Below are the steps required to get this working on a base linux system.
-
-    1. Install all required dependencies
-
-        yum -y install python3 python3-pip
-
-    2. Install and Configure Web Server
-
-        pip3 install flask
-
-    3. Start Web Server
-
-        FLASK_APP=app.py flask run --host=localhost --port=8080
 
 ```
+How to run this demo: Run make with one of the following options:
+
+   - [make run-local] - run assembly-webapp, a Flask based app, on the local system
+   - [make docker-image] - build assembly-webapp docker image
+   - [make run-docker-image] - run 3 containers using assembly-webapp docker image
+   - [make docker-clean] - stop assembly-webapp containers and remove assembly-webapp docker images
+
+   - [make build-version1] - push code version 1.0 to gitlab, run CI/CD Pipeline, push image to Docker Hub
+   - [make build-version2] - push code version 2.0 to gitlab, run CI/CD Pipeline, push image to Docker Hub
+   - [make harbor-version1] - build docker image version 1.0, push image to Docker Hub
+   - [make harbor-version2] - build docker image version 2.0, push image to Docker Hub
+
+   ----- Deployment using Service type LoadBalance -----
+   - [make kubernetes-deploy-webapp] - deploy assembly-webapp to Kubernetes using the latest Harbor image
+   - [make kubernetes-delete-webapp] - delete assembly-webapp deployment and namespace
+   - [make kubernetes-update-webapp-version1] - update assembly-webapp pod images to version 1.0
+   - [make kubernetes-update-webapp-version2] - update assembly-webapp pod images to version 2.0
+   - [make kubernetes-update-webapp-replicas-3] - scale assembly-webapp to 3 pods
+   - [make kubernetes-update-webapp-replicas-6] - scale assembly-webapp to 6 pods
+
+   ----- Deployment using Ingress Controller -----
+   - [make deploy-assembly-ingress] - deploy assembly-webapp to Kubernetes using the latest Harbor image
+   - [make delete-assembly-ingress] - delete assembly-webapp deployment and namespace
+   - [make update-assembly-ingress-version1] - update assembly-webapp pod images to version 1.0
+   - [make update-assembly-ingress-version2] - update assembly-webapp pod images to version 2.0
+   - [make update-assembly-ingress-replicas-3] - scale assembly-webapp to 3 pods
+   - [make update-assembly-ingress-replicas-6] - scale assembly-webapp to 6 pods
+
+```
+
 
 ## Store secrets by using the pass insert command:
 
