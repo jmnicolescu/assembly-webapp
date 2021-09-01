@@ -5,35 +5,35 @@
     2. Run the monolithic Web App 
 
     3. Containerize the Web App 
-            Create the Docker File
-            Package the Web App into a Docker image
+        Create the Docker File
+        Package the Web App into a Docker image
 
     4. Run the container from an image using the docker run command. 
-            Will run the container on the local host.
+        Will run the container on the local host.
 
     5. Build new Docker images using GitLab CI/CD and push the images to Harbor Registry
-            CI/CD is a critical piece of the puzzle because it enables an automated processes for creating new images.
-            This is an  example of building a Pipeline based on GitLab and Harbor 
-            We will create application code version 1.0, push the cod to GitLab, run the CI/CD Pipeline, create a new Docker Image, push the image to Harbor and tag the image using the version 1.0 tag.
-            We will update the application code to version 2.0, push the cod to GitLab, run the CI/CD Pipeline, create a new Docker Image, push the new image to Harbor and tag the image using the version 2.0 tag.
+        CI/CD is a critical piece of the puzzle because it enables an automated processes for creating new images.
+        This is an  example of building a Pipeline based on GitLab and Harbor 
+        We will create application code version 1.0, push the cod to GitLab, run the CI/CD Pipeline, create a new Docker Image, push the image to Harbor and tag the image using the version 1.0 tag.
+        We will update the application code to version 2.0, push the cod to GitLab, run the CI/CD Pipeline, create a new Docker Image, push the new image to Harbor and tag the image using the version 2.0 tag.
 
-        6. Build new images using GitHub and Docker Hub
-            We will build Docker Images automatically when a new version of the code is push to GitHub
-            Docker role in Ci/CD pipeline
+    6. Build new images using GitHub and Docker Hub
+        We will build Docker Images automatically when a new version of the code is push to GitHub
+        Docker role in Ci/CD pipeline
 
-        7. Deploy the Web App to Kubernetes
-            We will create a Namespace, a Kubernetes Deployment File and will expose Web App service to the outside world.
-            We will look at two deployment options. One deployment will create a Service of Type LoadBalancer. The second deployment will use the Ingress Controller.
+    7. Deploy the Web App to Kubernetes
+        We will create a Namespace, a Kubernetes Deployment File and will expose Web App service to the outside world.
+        We will look at two deployment options. One deployment will create a Service of Type LoadBalancer. The second deployment will use the Ingress Controller.
 
-        8. Upgrade the Web App to a new version 
-            We will upgrade the Web App to a new version by building and deploying a newer Docker image.
-            Kubernetes rolling update feature lets us update the Deployments without downtime.
-            During a rolling update, the cluster incrementally replaces the existing web app Pods with Pods containing the Docker image for the new version. 
+    8. Upgrade the Web App to a new version 
+        We will upgrade the Web App to a new version by building and deploying a newer Docker image.
+        Kubernetes rolling update feature lets us update the Deployments without downtime.
+        During a rolling update, the cluster incrementally replaces the existing web app Pods with Pods containing the Docker image for the new version. 
 
-        9. Scale the Web App when the demand increases 
-            We will upgrade the web-app to a new version by building and deploying a newer Docker image.
-            Kubernetes rolling update feature lets us update the Deployments without downtime.
-            During a rolling update, the cluster incrementally replaces the existing web app Pods with Pods containing the Docker image for the new version. 
+    9. Scale the Web App when the demand increases 
+        We will upgrade the web-app to a new version by building and deploying a newer Docker image.
+        Kubernetes rolling update feature lets us update the Deployments without downtime.
+        During a rolling update, the cluster incrementally replaces the existing web app Pods with Pods containing the Docker image for the new version. 
 ```
 
 ```
