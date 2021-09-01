@@ -7,7 +7,7 @@
 .PHONY: update-assembly-ingress-replicas-3 update-assembly-ingress-replicas-6
 .PHONY: kubernetes-update-webapp-version1 kubernetes-update-webapp-version2
 .PHONY: kubernetes-update-webapp-replicas-3 kubernetes-update-webapp-replicas-6
-.PHONY: run-local docker-image run-docker-image docker-clean build-version1 build-version2 harbor-version1 harbor-version2
+.PHONY: run-local docker-image run-docker-image docker-clean build-version1 build-version2 dockerhub-version1 dockerhub-version2
 
 build:
 	@echo " "
@@ -16,10 +16,11 @@ build:
 	@echo "  [make docker-image] - build assembly-webapp docker image"
 	@echo "  [make run-docker-image] - run 3 containers using assembly-webapp docker image"
 	@echo "  [make docker-clean] - stop assembly-webapp containers and remove assembly-webapp docker images"
-	@echo "  [make build-version1] - push code version 1.0 to gitlab, run CI/CD Pipeline, push image to Harbor Registry"
-	@echo "  [make build-version2] - push code version 2.0 to gitlab, run CI/CD Pipeline, push image to Harbor Registry"
-	@echo "  [make harbor-version1] - build docker image version 1.0, push image to Harbor Registry"
-	@echo "  [make harbor-version2] - build docker image version 2.0, push image to Harbor Registry"
+
+	@echo "  [make build-version1] - push code version 1.0 to gitlab, run CI/CD Pipeline, push image to Docker Hub"
+	@echo "  [make build-version2] - push code version 2.0 to gitlab, run CI/CD Pipeline, push image to Docker Hub"
+	@echo "  [make harbor-version1] - build docker image version 1.0, push image to Docker Hub"
+	@echo "  [make harbor-version2] - build docker image version 2.0, push image to Docker Hub"
 	
 	@echo "  ----- Deployment using Service type LoadBalance -----"
 	@echo "  [make kubernetes-deploy-webapp] - deploy assembly-webapp to Kubernetes using the latest Harbor image"
@@ -36,9 +37,11 @@ build:
 	@echo "  [make update-assembly-ingress-version2] - update assembly-webapp pod images to version 2.0"
 	@echo "  [make update-assembly-ingress-replicas-3] - scale assembly-webapp to 3 pods"
 	@echo "  [make update-assembly-ingress-replicas-6] - scale assembly-webapp to 6 pods"
+	@echo "  ----- "
+	@echo "  [make clean] - run docker-clean, git-tag-clean, kubernetes-delete-webapp, delete-assembly-ingress"
 	@echo " "
 
-clean: delete-assembly-ingress kubernetes-delete-webapp docker-clean
+clean: delete-assembly-ingress kubernetes-delete-webapp docker-clean git-tag-clean
 
 run-local:
 	FLASK_APP=app.py flask run --host=localhost --port=8080
@@ -80,7 +83,7 @@ build-version2:
 	git tag 2.0
 	git push --tags
 
-harbor-version1:
+dockerhub-version1:
 	@echo " "
 	@echo "BUILDING ASSEMBLY-WEBAPP VERSION 1.0 "
 	@echo "[assembly-webapp] Step 1: Update code"
@@ -89,20 +92,18 @@ harbor-version1:
 	@echo " "
 	@echo "[assembly-webapp] Step 2: Create Docker Image"
 	docker build  . -t  jmnicolescu/assembly-webapp:1.0 -t jmnicolescu/assembly-webapp:latest
-	docker tag jmnicolescu/assembly-webapp:1.0 harbor.flexlab.local/jmnicolescu/assembly-webapp:1.0
-	docker tag jmnicolescu/assembly-webapp:latest harbor.flexlab.local/jmnicolescu/assembly-webapp:latest
 	@echo " "
 	@echo "[assembly-webapp] Step 3: Push image to registry"
-	@echo "Login to ${HARBOR_REGISTRY}"
-	@echo -n ${HARBOR_PASSWORD} | docker login -u ${HARBOR_USERNAME} --password-stdin https://${HARBOR_REGISTRY}
-	docker push ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:1.0
-	docker push ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:latest
-	docker pull ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:1.0
-	docker pull ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:latest
-	@echo "Logout from ${HARBOR_REGISTRY}"
-	@docker logout https://${HARBOR_REGISTRY}
+	@echo "Login to Docker Hub"
+	@echo -n ${HARBOR_PASSWORD} | docker login -u ${HARBOR_USERNAME} --password-stdin
+	docker push jmnicolescu/assembly-webapp:1.0
+	docker push jmnicolescu/assembly-webapp:latest
+	docker pull jmnicolescu/assembly-webapp:1.0
+	docker pull jmnicolescu/assembly-webapp:latest
+	@echo "Logout from Docker Hub"
+	@docker logout
 
-harbor-version2:
+dockerhub-version2:
 	@echo " "
 	@echo "BUILDING ASSEMBLY-WEBAPP VERSION 2.0 "
 	@echo "[assembly-webapp] Step 1: Update code"
@@ -111,18 +112,16 @@ harbor-version2:
 	@echo " "
 	@echo "[assembly-webapp] Step 2: Create Docker Image"
 	docker build  . -t  jmnicolescu/assembly-webapp:2.0 -t jmnicolescu/assembly-webapp:latest
-	docker tag jmnicolescu/assembly-webapp:2.0 harbor.flexlab.local/jmnicolescu/assembly-webapp:2.0
-	docker tag jmnicolescu/assembly-webapp:latest harbor.flexlab.local/jmnicolescu/assembly-webapp:latest
 	@echo " "
 	@echo "[assembly-webapp] Step 3: Push image to registry"
-	@echo "Login to ${HARBOR_REGISTRY}"
-	@echo -n ${HARBOR_PASSWORD} | docker login -u ${HARBOR_USERNAME} --password-stdin https://${HARBOR_REGISTRY}
-	docker push ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:2.0
-	docker push ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:latest
-	docker pull ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:2.0
-	docker pull ${HARBOR_REGISTRY}/jmnicolescu/assembly-webapp:latest
-	@echo "Logout from ${HARBOR_REGISTRY}"
-	@docker logout https://${HARBOR_REGISTRY}
+	@echo "Login to Docker Hub"
+	@echo -n ${HARBOR_PASSWORD} | docker login -u ${HARBOR_USERNAME} --password-stdin
+	docker push jmnicolescu/assembly-webapp:2.0
+	docker push jmnicolescu/assembly-webapp:latest
+	docker pull jmnicolescu/assembly-webapp:2.0
+	docker pull jmnicolescu/assembly-webapp:latest
+	@echo "Logout from Docker Hub"
+	@docker logout
 
 kubernetes-deploy-webapp:
 	kubectl apply -f deploy-assembly-lb/namespace-definition.yaml
@@ -136,13 +135,13 @@ kubernetes-delete-webapp:
 	kubectl delete namespace assembly
 
 kubernetes-update-webapp-version1:
-	kubectl -n assembly set image deployment.apps/assembly-deployment assembly-webapp=harbor.flexlab.local/jmnicolescu/assembly-webapp:1.0
+	kubectl -n assembly set image deployment.apps/assembly-deployment assembly-webapp=jmnicolescu/assembly-webapp:1.0
 	kubectl -n assembly rollout status deployment.apps/assembly-deployment
 	kubectl get pods --namespace=assembly
 	kubectl get pods --namespace assembly -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' | sort
 
 kubernetes-update-webapp-version2:
-	kubectl -n assembly set image deployment.apps/assembly-deployment assembly-webapp=harbor.flexlab.local/jmnicolescu/assembly-webapp:2.0
+	kubectl -n assembly set image deployment.apps/assembly-deployment assembly-webapp=jmnicolescu/assembly-webapp:2.0
 	kubectl -n assembly rollout status deployment.apps/assembly-deployment
 	kubectl get pods --namespace=assembly
 	kubectl get pods --namespace assembly -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' | sort
@@ -162,6 +161,7 @@ deploy-assembly-ingress:
 	rm -f deploy-assembly-ingress/assembly-webapp-tls.key deploy-assembly-ingress/assembly-webapp-tls.crt
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout deploy-assembly-ingress/assembly-webapp-tls.key -out deploy-assembly-ingress/assembly-webapp-tls.crt -subj "/CN=assembly-webapp.flexlab.local/O=assembly-webapp"
 	kubectl create secret tls assembly-webapp-tls --key deploy-assembly-ingress/assembly-webapp-tls.key --cert deploy-assembly-ingress/assembly-webapp-tls.crt -n assembly-ingress
+	rm -f deploy-assembly-ingress/assembly-webapp-tls.key deploy-assembly-ingress/assembly-webapp-tls.crt
 	kubectl apply -f deploy-assembly-ingress/deployment-definition.yaml
 	kubectl get pods --namespace assembly-ingress
 	kubectl get pods --namespace assembly-ingress -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' | sort
@@ -172,13 +172,13 @@ delete-assembly-ingress:
 	kubectl delete namespace assembly-ingress
 
 update-assembly-ingress-version1:
-	kubectl -n assembly-ingress set image deployment.apps/assembly-deployment assembly-webapp=harbor.flexlab.local/jmnicolescu/assembly-webapp:1.0
+	kubectl -n assembly-ingress set image deployment.apps/assembly-deployment assembly-webapp=jmnicolescu/assembly-webapp:1.0
 	kubectl -n assembly-ingress rollout status deployment.apps/assembly-deployment
 	kubectl get pods --namespace assembly-ingress
 	kubectl get pods --namespace assembly-ingress -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' | sort
 
 update-assembly-ingress-version2:
-	kubectl -n assembly-ingress set image deployment.apps/assembly-deployment assembly-webapp=harbor.flexlab.local/jmnicolescu/assembly-webapp:2.0
+	kubectl -n assembly-ingress set image deployment.apps/assembly-deployment assembly-webapp=jmnicolescu/assembly-webapp:2.0
 	kubectl -n assembly-ingress rollout status deployment.apps/assembly-deployment
 	kubectl get pods --namespace assembly-ingress
 	kubectl get pods --namespace assembly-ingress -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' | sort

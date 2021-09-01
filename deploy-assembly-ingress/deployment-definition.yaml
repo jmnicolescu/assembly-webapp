@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: assembly-webapp
-        image: harbor.flexlab.local/jmnicolescu/assembly-webapp:latest
+        image: jmnicolescu/assembly-webapp:latest
         ports:
         - containerPort: 8080
 ---
